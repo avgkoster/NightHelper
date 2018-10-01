@@ -6,51 +6,90 @@ import openpyxl
 import sqlite3
 
 
-Flag=0
-
-
-class Auth():
-
-
-
-
-    def onclose():
-        Flag=1
-    def __init__(self):
-        frame = Tk()
-        frame.protocol("WM_DELELETE_WINDOW",self.onclose)
-        frame.mainloop()
-
- 
-
 
 
 class Helper:
     filename = 0
     mainFrame = Tk()   
-    VidProd = 0 
-    Dogovor = 0
-    prices = 0
-    Zalob = 0
+    VidProd = Entry() 
+    Dogovor = Entry()
+    prices = Entry()
+    Zalob = Entry()
+    DateText = Label()
+    SmenaText = Label()
+    Zarab = Label()
+    Procent = Label()
+    VidProdLabel = Label()
+    DogovorLabel = Label()
+    PriceLabel = Label()
+    DogovorButton = Button()
+    ZalobLabel = Label()
+    ZalobButton = Button()
+    EmailButton = Button()
+    SmenButton = Button()
+    AuthButton = Button()
+    login = Entry()
+    passw = Entry()
+    loginLabel = Label()
+    passwLabel = Label()
   
     
     def __init__(self,filename):
-           #Глобальные переменные
             self.filename=filename
-            self.VidProd = Entry(width=30)
-            self.VidProd.place(x=15,y=110)
-            self.Dogovor = Entry(width=25)
-            self.Dogovor.place(x=220,y=110)
-            self.prices = Entry(width=10)
-            self.prices.place(x=395,y=110)
-            self.Zalob = Text(width=70,height=5)
-            self.Zalob.place(x=15,y=160)
             self.CreateElem(self.mainFrame,'calibri 12',DISABLED)
-            self.mainFrame.geometry("600x350+500+300")
+            self.hideElem(0)
+            self.Authorization()
             self.mainFrame.resizable(False,False)
             self.mainFrame.mainloop()
             
+            
+    #Скрытие элментов, 0 - элементы основной формы, 1- элементы авторизации       
+    def hideElem(self,types):
+        if types==0:
+            self.VidProd.place_forget()
+            self.Dogovor.place_forget()
+            self.prices.place_forget()
+            self.Zalob.place_forget()
+            self.DateText.place_forget()
+            self.SmenaText.place_forget()
+            self.Zarab.place_forget()
+            self.Procent.place_forget()
+            self.VidProdLabel.place_forget()
+            self.DogovorLabel.place_forget()
+            self.PriceLabel.place_forget()
+            self.DogovorButton.place_forget()
+            self.ZalobLabel.place_forget()
+            self.ZalobButton.place_forget()
+            self.EmailButton.place_forget()
+            self.SmenButton.place_forget()
+        elif types==1:
+            self.AuthButton.place_forget()
+            self.login.place_forget()
+            self.passw.place_forget()
+            self.loginLabel.place_forget()
+            self.passwLabel.place_forget()
 
+
+
+    #Авторизация
+    def Authorization(self):
+        def AuthCommand():
+            self.hideElem(1)
+            self.mainFrame.geometry("600x350+500+300")
+            self.CreateElem(self.mainFrame,'calibri 12',DISABLED)
+        self.mainFrame.geometry("250x140+600+300")
+        self.AuthButton = Button(text="Войти",width=30,command=AuthCommand)
+        self.AuthButton.place(x=15,y=105)
+        self.login = Entry(width=36)
+        self.login.place(x=15,y=35)
+        self.passw = Entry(width=36)
+        self.passw.place(x=15,y=75)
+        #Надписи
+        loginLabel = Label(text="Введите логин")
+        loginLabel.place(x=15,y=10)
+        passwLabel = Label(text="Введите пароль")
+        passwLabel.place(x=15,y=54)
+    
     #Выгрузка таблиц
     def ReadExcel(self,variant):
         wbb = openpyxl.load_workbook(filename=self.filename,data_only=True)
@@ -104,42 +143,51 @@ class Helper:
         return int(sum)
 
 
- 
+
     #Элементы
     def CreateElem(self,Frame=mainFrame,typefont="Verdana 12",state=NORMAL):
-        SmenButton = Button(Frame,width=70,text='Новая смена',
+        self.VidProd = Entry(width=30)
+        self.VidProd.place(x=15,y=110)
+        self.Dogovor = Entry(width=25)
+        self.Dogovor.place(x=220,y=110)
+        self.prices = Entry(width=10)
+        self.prices.place(x=395,y=110)
+        self.Zalob = Text(width=70,height=5)
+        self.Zalob.place(x=15,y=160)
+        #Новая смена
+        self.SmenButton = Button(Frame,width=70,text='Новая смена',
                         font=typefont,command=self.NewSmena)
-        SmenButton.place(x=15,y=45)
+        self.SmenButton.place(x=15,y=45)
         #Сегодняшняя дата
-        DateText = Label(Frame,font=typefont,
+        self.DateText = Label(Frame,font=typefont,
                          text="Сегодня: "+
                          str(datetime.now().strftime("%d.%m.%y"))+" |")
-        DateText.place(x=10,y=10)
+        self.DateText.place(x=10,y=10)
         #Сегодняшняя смена
-        SmenaText = Label(Frame,font=typefont,
+        self.SmenaText = Label(Frame,font=typefont,
                          text="Смена: "+
                          str(self.ReadExcel(0))+"  |")
-        SmenaText.place(x=145,y=10)
+        self.SmenaText.place(x=145,y=10)
         #Текущий заработок
-        Zarab = Label(Frame,font=typefont,
+        self.Zarab = Label(Frame,font=typefont,
                       text="Текущий заработок: "+str(self.ReadExcel(1))+"руб. |")
-        Zarab.place(x=235,y=10)
-        Procent = Label(Frame, font=typefont,
+        self.Zarab.place(x=235,y=10)
+        self.Procent = Label(Frame, font=typefont,
                       text="Процент: " + str(self.FindProc())+"руб.")
-        Procent.place(x=460, y=10)
+        self.Procent.place(x=460, y=10)
         #Ввод нового договора   
-        VidProdLabel = Label(Frame, font=typefont,
+        self.VidProdLabel = Label(Frame, font=typefont,
                       text="Вид продажи: ")
-        VidProdLabel.place(x=15, y=85)
-        DogovorLabel = Label(Frame, font=typefont,
+        self.VidProdLabel.place(x=15, y=85)
+        self.DogovorLabel = Label(Frame, font=typefont,
                       text="Номер договора: ")
-        DogovorLabel.place(x=225, y=85)
-        PriceLabel = Label(Frame,font=typefont,
+        self.DogovorLabel.place(x=225, y=85)
+        self.PriceLabel = Label(Frame,font=typefont,
                            text='Цена: ')
-        PriceLabel.place(x=405,y=85)
-        DogovorButton = Button(Frame,width=11,height=-5,text='Добавить',
+        self.PriceLabel.place(x=405,y=85)
+        self.DogovorButton = Button(Frame,width=11,height=-5,text='Добавить',
                             font='calibri 12',command=self.NewDogovor,state=state)
-        DogovorButton.place(x=485,y=95)
+        self.DogovorButton.place(x=485,y=95)
         #Очистка договоров
         self.VidProd.delete(0,END)
         self.Dogovor.delete(0,END)
@@ -148,15 +196,15 @@ class Helper:
         self.Dogovor.state=state
         self.prices.state=state
         #Добавление жалоб
-        ZalobLabel = Label(Frame,font = typefont,
+        self.ZalobLabel = Label(Frame,font = typefont,
                            text="Добавление замечаний: ")
-        ZalobLabel.place(x=15,y=130)
-        ZalobButton = Button(text="Добавить замечание(Новых замечаний нет)",width=79,
+        self.ZalobLabel.place(x=15,y=130)
+        self.ZalobButton = Button(text="Добавить замечание(Новых замечаний нет)",width=79,
                              command=self.NewZalob,state=state)
-        ZalobButton.place(x=15,y=255)
+        self.ZalobButton.place(x=15,y=255)
         #Отправка почты
-        EmailButton = Button(state=state,text="Отправить отчет",width=79,command=self.RunEmail)
-        EmailButton.place(x=15,y=295)
+        self.EmailButton = Button(state=state,text="Отправить отчет",width=79,command=self.RunEmail)
+        self.EmailButton.place(x=15,y=295)
 
         #Загрузка таблиц
     def NewSmena(self):
@@ -173,6 +221,7 @@ class Helper:
                     sheet["AI2"].value=sheet["AG2"].value*sheet["AH2"].value
                     wb.save('fick1.xlsx')
                     self.CreateElem(self.mainFrame,'calibri 12',NORMAL)
+                    self.SmenButton['state']=DISABLED
                     bools=1
                     break
 
