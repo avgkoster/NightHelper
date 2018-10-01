@@ -1,29 +1,55 @@
 from tkinter import *
 from datetime import *
-from tkinter import messagebox
+from tkinter import messagebox, DISABLED
 from sendmails import OtprEmail
 import openpyxl
+import sqlite3
+
+
+Flag=0
+
+
+class Auth():
+
+
+
+
+    def onclose():
+        Flag=1
+    def __init__(self):
+        frame = Tk()
+        frame.protocol("WM_DELELETE_WINDOW",self.onclose)
+        frame.mainloop()
+
+ 
+
 
 
 class Helper:
     filename = 0
     mainFrame = Tk()   
-    VidProd = Entry(width=30)
-    VidProd.place(x=15,y=110)
-    Dogovor = Entry(width=25)
-    Dogovor.place(x=220,y=110)
-    prices = Entry(width=10)
-    prices.place(x=395,y=110)
-    Zalob = Text(width=70,height=5)
-    Zalob.place(x=15,y=160)
+    VidProd = 0 
+    Dogovor = 0
+    prices = 0
+    Zalob = 0
+  
     
     def __init__(self,filename):
            #Глобальные переменные
-            self.filename=filename 
-            self.CreateElem(self.mainFrame,'calibri 12')
+            self.filename=filename
+            self.VidProd = Entry(width=30)
+            self.VidProd.place(x=15,y=110)
+            self.Dogovor = Entry(width=25)
+            self.Dogovor.place(x=220,y=110)
+            self.prices = Entry(width=10)
+            self.prices.place(x=395,y=110)
+            self.Zalob = Text(width=70,height=5)
+            self.Zalob.place(x=15,y=160)
+            self.CreateElem(self.mainFrame,'calibri 12',DISABLED)
             self.mainFrame.geometry("600x350+500+300")
             self.mainFrame.resizable(False,False)
             self.mainFrame.mainloop()
+            
 
     #Выгрузка таблиц
     def ReadExcel(self,variant):
@@ -80,7 +106,7 @@ class Helper:
 
  
     #Элементы
-    def CreateElem(self,Frame,typefont='calibri 12'):
+    def CreateElem(self,Frame=mainFrame,typefont="Verdana 12",state=NORMAL):
         SmenButton = Button(Frame,width=70,text='Новая смена',
                         font=typefont,command=self.NewSmena)
         SmenButton.place(x=15,y=45)
@@ -112,21 +138,24 @@ class Helper:
                            text='Цена: ')
         PriceLabel.place(x=405,y=85)
         DogovorButton = Button(Frame,width=11,height=-5,text='Добавить',
-                            font='calibri 12',command=self.NewDogovor)
+                            font='calibri 12',command=self.NewDogovor,state=state)
         DogovorButton.place(x=485,y=95)
         #Очистка договоров
         self.VidProd.delete(0,END)
         self.Dogovor.delete(0,END)
         self.prices.delete(0,END)
+        self.VidProd.state=state
+        self.Dogovor.state=state
+        self.prices.state=state
         #Добавление жалоб
         ZalobLabel = Label(Frame,font = typefont,
                            text="Добавление замечаний: ")
         ZalobLabel.place(x=15,y=130)
         ZalobButton = Button(text="Добавить замечание(Новых замечаний нет)",width=79,
-                             command=self.NewZalob)
+                             command=self.NewZalob,state=state)
         ZalobButton.place(x=15,y=255)
         #Отправка почты
-        EmailButton = Button(text="Отправить отчет",width=79,command=self.RunEmail)
+        EmailButton = Button(state=state,text="Отправить отчет",width=79,command=self.RunEmail)
         EmailButton.place(x=15,y=295)
 
         #Загрузка таблиц
@@ -143,7 +172,7 @@ class Helper:
                     sheet["AG2"].value=sheet["AG2"].value+1
                     sheet["AI2"].value=sheet["AG2"].value*sheet["AH2"].value
                     wb.save('fick1.xlsx')
-                    self.CreateElem(self.mainFrame)
+                    self.CreateElem(self.mainFrame,'calibri 12',NORMAL)
                     bools=1
                     break
 
@@ -163,11 +192,14 @@ class Helper:
             sheet['B'+str(i)].value = "Рузавин К.В"
             sheet['C'+str(i)].value = "Новых замечаний нет"    
         wb.save(self.filename)
-        self.CreateElem(self.mainFrame)  
+        self.CreateElem(self.mainFrame)
+
 
            
-
-newWindow = Helper('fick1.xlsx')
+if __name__=='__main__':
+    newWindow = Helper('fick1.xlsx')
+  
+    
 
     
 
