@@ -33,6 +33,22 @@ class Helper:
     loginLabel = Label()
     passwLabel = Label()
   
+    def authlog(self,pas,log):
+        connects = sqlite3.connect("db.db")
+        cursor_log = connects.cursor()
+        cursor_pas = connects.cursor()
+        sql = "SELECT username FROM users"
+        cursor_log.execute(sql)
+        sql = "SELECT pass FROM users"
+        cursor_pas.execute(sql)
+        for find in cursor_log:
+            if((log,)==find):
+                for find in cursor_pas:
+                    if((pas,)==find):
+                        self.hideElem(1)
+                        self.mainFrame.geometry("600x350+500+300")
+                        self.CreateElem(self.mainFrame,'calibri 12',DISABLED)
+
     
     def __init__(self,filename):
             self.filename=filename
@@ -74,9 +90,7 @@ class Helper:
     #Авторизация
     def Authorization(self):
         def AuthCommand():
-            self.hideElem(1)
-            self.mainFrame.geometry("600x350+500+300")
-            self.CreateElem(self.mainFrame,'calibri 12',DISABLED)
+            self.authlog(self.passw.get(),self.login.get())
         self.mainFrame.geometry("250x140+600+300")
         self.AuthButton = Button(text="Войти",width=30,command=AuthCommand)
         self.AuthButton.place(x=15,y=105)
@@ -152,7 +166,7 @@ class Helper:
         self.Dogovor.place(x=220,y=110)
         self.prices = Entry(width=10)
         self.prices.place(x=395,y=110)
-        self.Zalob = Text(width=70,height=5)
+        self.Zalob = Text(width=80,height=5)
         self.Zalob.place(x=15,y=160)
         #Новая смена
         self.SmenButton = Button(Frame,width=70,text='Новая смена',
@@ -199,11 +213,11 @@ class Helper:
         self.ZalobLabel = Label(Frame,font = typefont,
                            text="Добавление замечаний: ")
         self.ZalobLabel.place(x=15,y=130)
-        self.ZalobButton = Button(text="Добавить замечание(Новых замечаний нет)",width=79,
+        self.ZalobButton = Button(text="Добавить замечание(Новых замечаний нет)",width=93,
                              command=self.NewZalob,state=state)
         self.ZalobButton.place(x=15,y=255)
         #Отправка почты
-        self.EmailButton = Button(state=state,text="Отправить отчет",width=79,command=self.RunEmail)
+        self.EmailButton = Button(state=state,text="Отправить отчет",width=93,command=self.RunEmail)
         self.EmailButton.place(x=15,y=295)
 
         #Загрузка таблиц
